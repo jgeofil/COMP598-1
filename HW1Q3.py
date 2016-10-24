@@ -2,14 +2,14 @@ import sys, re
 # ============================================ Student info methods================================================
 def get_student_name():
 	# @TO_STUDENT: Write your name here
-	student_name = ""
+	student_name = "Jeremy Georges-Filteau"
 	if not student_name:
 		raise ValueError("Error: you forgot to add your name in get_student_name method.")
 	return student_name
 
 def get_student_id():
 	# @TO_STUDENT: Write your student id here
-	student_id = ""
+	student_id = "260713547"
 	if not student_id:
 		raise ValueError("Error: you forgot to add your student id in get_student_id method.")
 	return student_id
@@ -88,6 +88,24 @@ def get_answer_Q3_1(subopt_result):
 	# basic check for the proper input
 	validate_Q3_1_input_format(subopt_result)
 	# @TO_STUDENT: Write your code here
+
+	seqs = len(subopt_result)
+	seqLen = len(subopt_result[0])
+	openings = [[] for x in range(0, seqs)]
+	occurences = [[0]*seqLen for x in range(0, seqLen)]
+
+	for n in range(0, seqLen):
+		for m in range(0, seqs):
+			symbol = subopt_result[m][n]
+			if symbol == '(':
+				openings[m].append(n)
+			if symbol == ')':
+				i = openings[m].pop()
+				occurences[i][n] += 1
+	print occurences
+	print openings
+
+
 	# @TO_STUDENT: use result variable for results. below is an example of an expected format for result.
 	result = [ [0, 1, 0.10], [0, 2, 0.15], [0, 3, 0.16] ]
 
@@ -113,7 +131,7 @@ def get_answer_Q3_2(q3_1_result, dot_ps_result):
 
 print("This is a solution of %s, student_id is %s" % (get_student_name(), get_student_id()) )
 
-subopt_result_filepath = "path/to/file/subopt_result_filepath.txt"
+subopt_result_filepath = "out.txt"
 dot_ps_filepath = "path/to/file/dot.ps"
 
 # parsing RNAsubopt result file
