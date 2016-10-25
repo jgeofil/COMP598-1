@@ -1,4 +1,4 @@
-import sys, re
+import sys, re, math
 # ============================================ Student info methods================================================
 def get_student_name():
 	# @TO_STUDENT: Write your name here
@@ -99,15 +99,16 @@ def get_answer_Q3_1(subopt_result):
 			symbol = subopt_result[m][n]
 			if symbol == '(':
 				openings[m].append(n)
-			if symbol == ')':
-				i = openings[m].pop()
-				occurences[i][n] += 1
-	print occurences
-	print openings
-
+			elif symbol == ')':
+				occurences[openings[m].pop()][n] += 1
+	result = []
+	for m, narr in enumerate(occurences):
+		for n, val in enumerate(narr):
+			if val != 0:
+				result.append([m,n,val/float(seqs)])
 
 	# @TO_STUDENT: use result variable for results. below is an example of an expected format for result.
-	result = [ [0, 1, 0.10], [0, 2, 0.15], [0, 3, 0.16] ]
+	#result = [ [0, 1, 0.10], [0, 2, 0.15], [0, 3, 0.16] ]
 
 	# @TO_STUDENT: output should be [ [i1, j1, freq_i1_j1 ], [i2, j2, freq_i2_j2 ], ...  ]
 	# use validate_Q3_output_format(result) to validate the output
@@ -123,6 +124,42 @@ def get_answer_Q3_2(q3_1_result, dot_ps_result):
 	result_error = 0
 	# @TO_STUDENT: Write your code here (trust me, answer is not 0 :-) )
 
+	def calcError(a,b):
+		return (a-b)**2
+
+	idx1, idx2 = 0,0
+	end1, end2 = len(q3_1_result), len(dot_ps_result)
+
+	while idx1 < end1 or idx2 < end2:
+		if idx1 >= end1:
+			val2 = dot_ps_result[idx2]
+			result_error += calcError(0, val2[2])
+			idx2 += 1
+		elif idx2 >= end2:
+			val1 = q3_1_result[idx1]
+			result_error += calcError(val1[2], 0)
+			idx1 += 1
+		else:
+			val1, val2 = q3_1_result[idx1], dot_ps_result[idx2]
+			if val1[0] == val2[0] and val1[1] == val2[1]:
+				result_error += calcError(val1[2], val2[2])
+				idx1 += 1
+				idx2 += 1
+			elif val1[0] == val2[0]:
+				if val1[1] > val2[1]:
+					result_error += calcError(0, val2[2])
+					idx2 += 1
+				else:
+					result_error += calcError(val1[2], 0)
+					idx1 += 1
+			elif val1[0] > val2[0]:
+				result_error += calcError(0, val2[2])
+				idx2 += 1
+			elif val1[0] < val2[0]:
+				result_error += calcError(val1[2], 0)
+				idx1 += 1
+	result_error = math.sqrt(result_error)
+	print result_error
 	return result_error
 
 # @TO_STUDENT: You can test your methods below by calling methods. Workflow is given already (can be changed).
@@ -132,7 +169,7 @@ def get_answer_Q3_2(q3_1_result, dot_ps_result):
 print("This is a solution of %s, student_id is %s" % (get_student_name(), get_student_id()) )
 
 subopt_result_filepath = "out.txt"
-dot_ps_filepath = "path/to/file/dot.ps"
+dot_ps_filepath = "dot.ps"
 
 # parsing RNAsubopt result file
 subopt_result = parse_subopt_result_file(subopt_result_filepath)
