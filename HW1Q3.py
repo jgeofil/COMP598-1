@@ -63,7 +63,7 @@ def parse_dot_ps_file(filepath):
 				continue
 			elif is_data and line.startswith('showpage'):
 				break
-			elif is_data:
+			elif is_data and line.split()[3] != 'lbox':
 				# take only first 3 numbers
 				data_line = line.split()[:3]
 				dot_ps_result.append(
@@ -105,7 +105,7 @@ def get_answer_Q3_1(subopt_result):
 	for m, narr in enumerate(occurences):
 		for n, val in enumerate(narr):
 			if val != 0:
-				result.append([m,n,val/float(seqs)])
+				result.append([m+1,n+1,val/float(seqs)])
 
 	# @TO_STUDENT: use result variable for results. below is an example of an expected format for result.
 	#result = [ [0, 1, 0.10], [0, 2, 0.15], [0, 3, 0.16] ]
@@ -125,7 +125,7 @@ def get_answer_Q3_2(q3_1_result, dot_ps_result):
 	# @TO_STUDENT: Write your code here (trust me, answer is not 0 :-) )
 
 	def calcError(a,b):
-		return (a-b)**2
+		return (a-b**2)**2
 
 	idx1, idx2 = 0,0
 	end1, end2 = len(q3_1_result), len(dot_ps_result)
@@ -168,17 +168,27 @@ def get_answer_Q3_2(q3_1_result, dot_ps_result):
 
 print("This is a solution of %s, student_id is %s" % (get_student_name(), get_student_id()) )
 
-subopt_result_filepath = "out.txt"
-dot_ps_filepath = "dot.ps"
+from subprocess import call
+import matplotlib.pyplot as plt
 
-# parsing RNAsubopt result file
-subopt_result = parse_subopt_result_file(subopt_result_filepath)
+for x in range(10):
+	call('RNAsubopt -p 100 < HW1Q3.fasta > out.txt', shell=True)
 
-# solving quesion Q3_1
-q3_1_result = get_answer_Q3_1(subopt_result)
+	subopt_result_filepath = "out.txt"
+	dot_ps_filepath = "dot.ps"
 
-# parsing dot.ps file
-dot_ps_result = parse_dot_ps_file(dot_ps_filepath)
+	# parsing RNAsubopt result file
+	subopt_result = parse_subopt_result_file(subopt_result_filepath)
 
-# solving question Q3_2
-q3_2_result = get_answer_Q3_2(q3_1_result, dot_ps_result)
+	# solving quesion Q3_1
+	q3_1_result = get_answer_Q3_1(subopt_result)
+
+	# parsing dot.ps file
+	dot_ps_result = parse_dot_ps_file(dot_ps_filepath)
+
+	# solving question Q3_2
+	q3_2_result = get_answer_Q3_2(q3_1_result, dot_ps_result)
+
+plt.figure()
+plt.errorbar(x, y, xerr=0.2, yerr=0.4)
+plt.title("Simplest errorbars, 0.2 in x, 0.4 in y")
