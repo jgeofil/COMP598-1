@@ -172,7 +172,7 @@ from subprocess import call
 import matplotlib.pyplot as plt
 
 for x in range(10):
-	call('RNAsubopt -p 100 < HW1Q3.fasta > out.txt', shell=True)
+	call('RNAsubopt -p 159420 < HW1Q3.fasta > out.txt', shell=True)
 
 	subopt_result_filepath = "out.txt"
 	dot_ps_filepath = "dot.ps"
@@ -188,7 +188,3 @@ for x in range(10):
 
 	# solving question Q3_2
 	q3_2_result = get_answer_Q3_2(q3_1_result, dot_ps_result)
-
-plt.figure()
-plt.errorbar(x, y, xerr=0.2, yerr=0.4)
-plt.title("Simplest errorbars, 0.2 in x, 0.4 in y")
